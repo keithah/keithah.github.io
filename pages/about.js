@@ -5,14 +5,7 @@ export default function About() {
     <Layout showSidebar={false}>
       <div className="page-content">
         <h1>About</h1>
-        <p>
-          Welcome to my blog! I'm Keith, and I write about software development, 
-          hardware projects, and technology insights.
-        </p>
-        <p>
-          This blog is automatically generated from my Day One journal entries, 
-          creating a seamless writing workflow from personal notes to published content.
-        </p>
+        <p>TBD</p>
       </div>
     </Layout>
   )

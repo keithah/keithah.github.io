@@ -4,7 +4,7 @@ import { getAllPosts, getAllTags } from '../lib/posts'
 
 export default function Home({ posts, tagCategories }) {
   return (
-    <Layout categories={tagCategories}>
+    <Layout categories={tagCategories} posts={posts}>
       <div className="posts-grid">
         {posts.map((post) => (
           <article key={post.uuid} className="post-card">
@@ -38,7 +38,7 @@ export default function Home({ posts, tagCategories }) {
 }
 
 export async function getStaticProps() {
-  const posts = getAllPosts(['title', 'publishDate', 'tags', 'slug', 'uuid', 'excerpt'])
+  const posts = getAllPosts(['title', 'publishDate', 'tags', 'slug', 'uuid', 'excerpt', 'content'])
   
   // Count posts per tag (using tags as categories)
   const allTags = getAllTags()
