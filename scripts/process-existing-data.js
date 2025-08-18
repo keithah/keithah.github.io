@@ -45,12 +45,22 @@ class DayOneProcessor {
     content = content.replace(/\\\_/g, '_');
     content = content.replace(/\\\./g, '.');
     
+    // Convert bare URLs to proper markdown links
+    content = content.replace(/https?:\/\/[^\s\n]+/g, (url) => {
+      // Extract a clean display text from the URL
+      const domain = url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+      return `[${domain}](${url})`;
+    });
+    
+    // Remove hashtags from the end (Day One format)
+    content = content.replace(/\n\s*#\w+(\s+#\w+)*\s*$/g, '');
+    
     // Remove title from content if it's the first line
     const lines = content.split('\n');
     const firstLine = lines[0].trim();
     
     // If first line looks like a title, remove it from content
-    if (firstLine && !firstLine.startsWith('#') && !firstLine.startsWith('!') && !firstLine.startsWith('http')) {
+    if (firstLine && !firstLine.startsWith('#') && !firstLine.startsWith('!') && !firstLine.startsWith('[')) {
       content = lines.slice(1).join('\n').trim();
     }
 
