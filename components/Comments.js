@@ -13,9 +13,9 @@ export default function Comments({ slug }) {
     const script = document.createElement('script')
     script.src = 'https://giscus.app/client.js'
     script.setAttribute('data-repo', 'keithah/keithah.github.io')
-    script.setAttribute('data-repo-id', 'R_kgDONpOlJw') // You'll need to get this from Giscus
-    script.setAttribute('data-category', 'General')
-    script.setAttribute('data-category-id', 'DIC_kwDONpOlJ84ClyPG') // You'll need to get this from Giscus
+    script.setAttribute('data-repo-id', 'R_kgDONpOlJw')
+    script.setAttribute('data-category', 'Announcements') 
+    script.setAttribute('data-category-id', 'DIC_kwDONpOlJ84ClyPH')
     script.setAttribute('data-mapping', 'pathname')
     script.setAttribute('data-strict', '0')
     script.setAttribute('data-reactions-enabled', '1')
