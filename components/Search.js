@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-export default function Search({ posts = [] }) {
+export default function Search({ posts = [], compact = false }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [showResults, setShowResults] = useState(false)
@@ -38,6 +38,59 @@ export default function Search({ posts = [] }) {
   const handleResultClick = () => {
     setQuery('')
     setShowResults(false)
+  }
+
+  if (compact) {
+    return (
+      <div className="search-container search-compact">
+        <div className="search-input-wrapper">
+          <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+            className="search-icon-compact"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <Path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="search-input-compact"
+          />
+        </div>
+        
+        {showResults && (
+          <div className="search-results search-results-compact">
+            {results.length > 0 ? (
+              results.map((post) => (
+                <Link
+                  key={post.uuid}
+                  href={`/posts/${post.slug}`}
+                  className="search-result"
+                  onClick={handleResultClick}
+                >
+                  <div className="search-result-title">{post.title}</div>
+                  <div className="search-result-tags">
+                    {post.tags?.map(tag => (
+                      <span key={tag} className="search-result-tag">{tag}</span>
+                    ))}
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="search-no-results">No results found</div>
+            )}
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
