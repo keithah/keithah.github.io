@@ -64,7 +64,7 @@ export default function PostPage({ post, tagCategories }) {
             
             <div className="comments-section">
               <h3>Comments</h3>
-              <Comments slug={post.slug} />
+              <Comments slug={post.slug} title={post.title} />
             </div>
           </article>
         </div>
