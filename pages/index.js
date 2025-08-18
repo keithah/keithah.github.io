@@ -15,59 +15,48 @@ export default function Home({ posts, tagCategories }) {
     <Layout categories={tagCategories} posts={posts} showSidebar={true}>
       <div className="home-layout">
         <div className="main-content">
-          <table className="posts-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Title</th>
-                <th>Image</th>
-                <th>Categories</th>
-              </tr>
-            </thead>
-            <tbody>
-              {posts.map((post) => (
-                <tr key={post.uuid}>
-                  <td className="post-date">
-                    {new Date(post.publishDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </td>
-                  <td className="post-title-cell">
-                    <Link href={`/posts/${post.slug}`} className="post-title-link">
-                      {post.title}
-                    </Link>
-                    <div className="post-tags-row">
-                      {post.tags.map(tag => (
-                        <Link key={tag} href={`/tag/${tag}`} className="post-tag">
-                          {tag}
-                        </Link>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="post-thumbnail">
-                    {getFirstImage(post) && (
+          <div className="posts-list">
+            {posts.map((post) => (
+              <article key={post.uuid} className="post-card">
+                <div className="post-date-column">
+                  {new Date(post.publishDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </div>
+                
+                <div className="post-content-column">
+                  <Link href={`/posts/${post.slug}`} className="post-title-link">
+                    <h2 className="post-title">{post.title}</h2>
+                  </Link>
+                  <div className="post-categories">
+                    {post.tags.map(tag => (
+                      <Link key={tag} href={`/tag/${tag}`} className="category-tag">
+                        {tag.toUpperCase()}
+                      </Link>
+                    ))}
+                  </div>
+                  <p className="post-description">
+                    Learn about {post.title.toLowerCase()} and explore key concepts through practical examples
+                  </p>
+                </div>
+                
+                <div className="post-image-column">
+                  {getFirstImage(post) && (
+                    <Link href={`/posts/${post.slug}`}>
                       <img 
                         src={getFirstImage(post)} 
                         alt={post.title}
                         loading="lazy"
+                        className="post-featured-image"
                       />
-                    )}
-                  </td>
-                  <td className="post-categories-cell">
-                    <div className="post-tags-row">
-                      {post.tags.map(tag => (
-                        <Link key={tag} href={`/tag/${tag}`} className="post-tag">
-                          {tag}
-                        </Link>
-                      ))}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </Link>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </Layout>
