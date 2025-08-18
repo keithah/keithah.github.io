@@ -71,33 +71,35 @@ export default function Layout({ children, categories = [], showSidebar = true, 
       </header>
 
       <div className="main-container">
-        <main className="main-content">
-          {children}
-        </main>
-        
-        {showSidebar && (
-          <aside className="sidebar">
-            <div className="sidebar-section">
-              <h3>Search</h3>
-              <Search posts={posts} />
-            </div>
-            
-            <div className="sidebar-section">
-              <h3>Categories</h3>
-              <div className="category-list">
-                {categories.map((category) => (
-                  <Link 
-                    key={category.name} 
-                    href={`/tag/${category.name}`}
-                    className="category-item"
-                  >
-                    {category.name} ({category.count})
-                  </Link>
-                ))}
+        <div style={{ display: 'flex', gap: '2rem' }}>
+          <main style={{ flex: 1 }}>
+            {children}
+          </main>
+          
+          {showSidebar && (
+            <aside className="sidebar">
+              <div className="sidebar-section">
+                <h3>Search</h3>
+                <Search posts={posts} />
               </div>
-            </div>
-          </aside>
-        )}
+              
+              <div className="sidebar-section">
+                <h3>Categories</h3>
+                <div className="category-list">
+                  {categories.map((category) => (
+                    <Link 
+                      key={category.name} 
+                      href={`/tag/${category.name}`}
+                      className="category-item"
+                    >
+                      {category.name} ({category.count})
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          )}
+        </div>
       </div>
     </div>
   )

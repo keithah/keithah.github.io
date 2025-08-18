@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import Layout from '../../components/Layout'
+import TableOfContents from '../../components/TableOfContents'
 import Comments from '../../components/Comments'
 import { getAllPosts, getPostBySlug, getAllTags } from '../../lib/posts'
 import { markdownToHtml } from '../../lib/markdownToHtml'
@@ -14,66 +15,62 @@ export default function PostPage({ post, tagCategories }) {
   }
 
   return (
-    <Layout categories={tagCategories}>
-      <article className="post">
-        <header className="post-header">
-          <nav className="breadcrumb">
-            <Link href="/">Home</Link> / 
-            <Link href="/">Posts</Link> / 
-            {post.title}
-          </nav>
-          
-          <h1>{post.title}</h1>
-          
-          <div className="meta">
-            <time>Published: {new Date(post.publishDate).toLocaleDateString()}</time>
-            {post.editDate !== post.publishDate && (
-              <time>Updated: {new Date(post.editDate).toLocaleDateString()}</time>
-            )}
-          </div>
-          
-          {post.tags.length > 0 && (
-            <div className="tags">
-              {post.tags.map(tag => (
-                <Link key={tag} href={`/tag/${tag}`} className="tag">
-                  {tag}
-                </Link>
-              ))}
-            </div>
-          )}
-        </header>
-        
-        {post.images && post.images.length > 0 && (
-          <div className="post-images">
-            {post.images.map((image, index) => (
-              <div key={index} className="image-container">
-                <Image
-                  src={`/images/${image}`}
-                  alt={`Image ${index + 1}`}
-                  width={800}
-                  height={600}
-                  style={{ objectFit: 'contain' }}
-                />
+    <Layout categories={tagCategories} showSidebar={false}>
+      <div className="post-layout">
+        <div className="post-content-area">
+          <article className="post">
+            <header className="post-header">
+              <h1 className="post-title">{post.title}</h1>
+              
+              <div className="post-meta">
+                <time>Published: {new Date(post.publishDate).toLocaleDateString()}</time>
+                {post.editDate !== post.publishDate && (
+                  <time>Modified: {new Date(post.editDate).toLocaleDateString()}</time>
+                )}
               </div>
-            ))}
-          </div>
-        )}
+              
+              {post.tags.length > 0 && (
+                <div className="post-tags">
+                  {post.tags.map(tag => (
+                    <Link key={tag} href={`/tag/${tag}`} className="tag-box">
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </header>
+            
+            {post.images && post.images.length > 0 && (
+              <div className="post-images">
+                {post.images.map((image, index) => (
+                  <div key={index} className="image-container">
+                    <Image
+                      src={`/images/${image}`}
+                      alt={`Image ${index + 1}`}
+                      width={800}
+                      height={600}
+                      style={{ objectFit: 'contain' }}
+                      className="post-image"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div 
+              className="post-content"
+              dangerouslySetInnerHTML={{ __html: post.content }} 
+            />
+            
+            <div className="comments-section">
+              <h3>Comments</h3>
+              <Comments slug={post.slug} />
+            </div>
+          </article>
+        </div>
         
-        <div 
-          className="post-content"
-          dangerouslySetInnerHTML={{ __html: post.content }} 
-        />
-        
-        <footer className="post-footer">
-          <div className="post-nav">
-            <Link href="/">
-              ← Back to Posts
-            </Link>
-          </div>
-        </footer>
-        
-        <Comments slug={post.slug} />
-      </article>
+        <TableOfContents content={post.content} />
+      </div>
     </Layout>
   )
 }
