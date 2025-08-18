@@ -6,7 +6,6 @@ uuid: 0D6B8D863AD841008103D3D27F42EAFC
 tags:
   - personal
   - test
-category: general
 images:
   - 0D6B8D863AD841008103D3D27F42EAFC_9E5F88ACD3B446B5820874FFBFF98B69.jpeg
 location:
