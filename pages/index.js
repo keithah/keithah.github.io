@@ -6,7 +6,9 @@ export default function Home({ posts, tagCategories }) {
   const getFirstImage = (post) => {
     // Check if post has images array
     if (post.images && post.images.length > 0) {
-      return `/images/2025/08/${post.images[0]}`
+      // Images are already stored with filename only, construct full path
+      const imageName = post.images[0]
+      return `/images/2025/08/${imageName}`
     }
     return null
   }
@@ -64,7 +66,7 @@ export default function Home({ posts, tagCategories }) {
 }
 
 export async function getStaticProps() {
-  const posts = getAllPosts(['title', 'publishDate', 'tags', 'slug', 'uuid', 'excerpt', 'content'])
+  const posts = getAllPosts(['title', 'publishDate', 'tags', 'slug', 'uuid', 'excerpt', 'content', 'images'])
   
   // Count posts per tag (using tags as categories)
   const allTags = getAllTags()
