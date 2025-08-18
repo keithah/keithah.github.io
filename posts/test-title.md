@@ -17,7 +17,9 @@ weather:
   description: Partly Cloudy
   temperature: 17.540000915527344
 ---
-Welcome to my test blog\!
+
+
+Welcome to my test blog!
 
 
 # Header 1
@@ -28,10 +30,10 @@ Sub blah blah
 
 **Bold**
 
-![Image](images/2025/08/0D6B8D863AD841008103D3D27F42EAFC_9E5F88ACD3B446B5820874FFBFF98B69.jpeg)
+![Image](/images/2025/08/0D6B8D863AD841008103D3D27F42EAFC_9E5F88ACD3B446B5820874FFBFF98B69.jpeg)
 
-https://www/.apple/.com/ios/home/
+https://www.apple.com/ios/home/
 
-Also grabbed some switches from Amazon: https://www/.amazon/.com/dp/B017LRCG38/?tag=someaffiliatelink%5C-20&utm%5C_source=blog
+Also grabbed some switches from Amazon: https://www.amazon.com/dp/B017LRCG38/?tag=someaffiliatelink-20&utm_source=blog&fbclid=trackingdata
 
 #personal #test

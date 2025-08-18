@@ -133,11 +133,19 @@ class DayOneProcessor {
         const date = new Date(entry.creationDate);
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
-        const imagePath = `images/${year}/${month}/${attachment.filename}`;
+        const imagePath = `/images/${year}/${month}/${attachment.filename}`;
         return `![Image](${imagePath})`;
       }
       return match;
     });
+
+    // Clean up escaped characters that might come from Day One
+    content = content.replace(/\\!/g, '!');
+    content = content.replace(/%5C/g, '');
+    
+    // Fix URLs that might have been mangled
+    content = content.replace(/https?:\/\/www\/\./g, 'https://www.');
+    content = content.replace(/\/\./g, '.');
 
     // Remove title from content if it's the first line (to avoid duplication in frontmatter)
     const lines = content.split('\n');
