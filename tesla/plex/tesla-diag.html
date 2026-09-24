@@ -1,0 +1,120 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tesla Video Diag</title>
+<style>body{background:#000;color:#ddd;font-family:monospace;padding:12px;font-size:13px}video{width:100%;max-width:560px;background:#111;border:2px solid #444;display:block} .card{border:1px solid #444;padding:14px;margin:14px 0;background:#111;border-radius:10px} pre{white-space:pre-wrap;word-break:break-all;font-size:11px;background:#000;padding:8px;border:1px solid #333;min-height:60px;max-height:360px;overflow:auto} button{padding:16px 20px;margin:6px;background:#fff;color:#000;border:0;border-radius:12px;font-weight:bold;font-size:16px} h2{color:#fff} .warn{padding:12px;border-radius:10px;margin:10px 0;font-size:13px;line-height:1.4} .ok{color:#4ade80} .bad{color:#f87171} .big{font-size:15px}
+#v0{background:#000 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><text x="50%" y="50%" fill="%23666" text-anchor="middle" dy=".3em">VIDEO 320x240</text></svg>') center/contain no-repeat}
+</style>
+</head><body>
+<h2>Diag v8 — rs=4 debug</h2>
+<div id="keepaliveStatus" class="warn" style="background:#222;border:1px solid #555">Keepalive: checking...</div>
+<div style="background:#331;border:1px solid #a44;padding:10px;border-radius:8px;margin:8px 0;font-size:12px">
+  <b>You saw:</b> keepalive paused=false v0 rs=4 net=1 → file loaded, but picture frozen.<br>
+  This means Tesla has the bytes but is blocking the video track.<br>
+  Tap <b>Play</b> once, wait 3s, then tap <b>Force Play (unmuted)</b>.
+</div>
+<div class="card" style="border-color:#f59e0b;border-width:2px">
+<video id="v0" muted playsinline controls preload="none"></video>
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+  <button id="btn0">▶ Play (muted, keepalive)</button>
+  <button id="btnUnmuted" style="background:#f59e0b">▶ Force Play (unmuted)</button>
+  <button id="btnNative" style="background:#333;color:#fff;border:1px solid #666">▶ Native controls only</button>
+  <button id="btnReset">↻ Reset</button>
+</div>
+<div class="big" style="margin:6px 0">Status: <span id="poll0" class="bad">idle</span></div>
+<div style="font-size:12px;line-height:1.6">
+  Time: <b><span id="time0">0.0</span>s</b> |
+  RS:<span id="rs0">0</span> NET:<span id="net0">0</span> |
+  paused:<b><span id="paused0">?</span></b> |
+  size:<span id="size0">?x?</span> |
+  buffered:<span id="buf0">0</span>s<br>
+  Keepalive: <span id="kaDbg">-</span>
+</div>
+<pre id="log0"></pre>
+<div style="font-size:11px"><a href="./test.mp4" target="_blank">test.mp4</a> · <a href="./keepalive.mp4" target="_blank">keepalive.mp4</a></div>
+</div>
+<script>
+(function(){
+  var url="./keepalive.mp4";
+  var G="globalVideoKeepAlive";
+  function getOrCreate(){
+    var el=document.getElementById(G);
+    if(el) return el;
+    el=document.createElement("video");
+    el.id=G; el.setAttribute("data-global-video-keepalive","1");
+    el.muted=true; el.loop=true; el.playsInline=true; el.preload="auto"; el.src=url;
+    el.style.cssText="position:fixed;width:1px;height:1px;opacity:0.001;pointer-events:none;z-index:-9999;bottom:0;right:0;overflow:hidden";
+    document.body.appendChild(el); return el;
+  }
+  var el=getOrCreate();
+  window.__kaPlay=function(){ el.muted=true; el.loop=true; if(!el.currentSrc) el.src=url; try{var p=el.play(); if(p&&p.catch) p.catch(function(){})}catch(e){} return el; };
+  function upd(){ var s=document.getElementById("keepaliveStatus"); if(!s) return; s.innerHTML="Keepalive: "+(el.paused?"PAUSED ❌ (tap Play)":"PLAYING ✅")+" t="+el.currentTime.toFixed(1)+" rs="+el.readyState+" err="+(el.error?el.error.code:"-")+" <span style='font-size:10px'>"+el.currentSrc.slice(-22)+"</span>"; s.style.background=el.paused?"#422":"#1a3a1a"; s.style.borderColor=el.paused?"#a44":"#3a6a3a"; document.getElementById("kaDbg").textContent=(el.paused?"paused":"playing")+" rs="+el.readyState; }
+  el.addEventListener("playing",upd); el.addEventListener("pause",upd); el.addEventListener("error",upd); setInterval(upd,600); upd();
+  el.addEventListener("timeupdate",function(){ var d=document.getElementById("kaDbg"); if(d) d.textContent=(el.paused?"paused":"playing")+" t="+el.currentTime.toFixed(1); });
+  document.addEventListener("click",function(){ upd(); },false);
+})();
+
+function log(msg){ var el=document.getElementById("log0"); el.textContent+=new Date().toLocaleTimeString()+" "+msg+"\n"; el.scrollTop=el.scrollHeight; }
+var v0=document.getElementById("v0");
+v0.muted=true; v0.playsInline=true; v0.preload="none";
+var sPoll=document.getElementById("poll0");
+
+["loadstart","loadedmetadata","loadeddata","canplay","canplaythrough","playing","pause","waiting","stalled","suspend","emptied","seeking","seeked","durationchange","progress","error"].forEach(function(ev){
+  v0.addEventListener(ev,function(){
+    var extra="";
+    if(ev==="loadedmetadata") extra=" dur="+Math.round(v0.duration)+" "+v0.videoWidth+"x"+v0.videoHeight;
+    if(ev==="error"){ var e=v0.error; extra=" code="+(e?e.code:"?")+" msg="+(e?e.message:"?"); }
+    if(ev==="playing"||ev==="pause"||ev==="waiting"||ev==="stalled") extra+=" t="+v0.currentTime.toFixed(1)+" paused="+v0.paused;
+    log(ev+extra+" rs="+v0.readyState+" net="+v0.networkState);
+  });
+});
+
+setInterval(function(){
+  document.getElementById("rs0").textContent=v0.readyState;
+  document.getElementById("net0").textContent=v0.networkState;
+  document.getElementById("paused0").textContent=v0.paused;
+  document.getElementById("paused0").className=v0.paused?"bad":"ok";
+  document.getElementById("time0").textContent=v0.currentTime.toFixed(1);
+  document.getElementById("size0").textContent=v0.videoWidth+"x"+v0.videoHeight;
+  var b=v0.buffered.length? (v0.buffered.end(v0.buffered.length-1)-v0.buffered.start(0)).toFixed(1):"0";
+  document.getElementById("buf0").textContent=b;
+  if(!v0.error && v0.readyState>=3 && !v0.paused) sPoll.textContent="PLAYING "+v0.currentTime.toFixed(1)+"s";
+},300);
+
+// Single handler for muted play — MUST be synchronous with click
+document.getElementById("btn0").addEventListener("click",function(){
+  var kv=document.getElementById("globalVideoKeepAlive");
+  log("=== TAP muted === kv paused="+(kv?kv.paused:"nokv")+" v0 rs="+v0.readyState+" net="+v0.networkState+" paused="+v0.paused+" w="+v0.videoWidth);
+  if(window.__kaPlay) window.__kaPlay();
+  if(kv){ try{kv.play()}catch(e){} }
+  v0.muted=true;
+  if(!v0.currentSrc){ v0.src="./test.mp4"; try{v0.load()}catch(e){} log("load ./test.mp4"); }
+  var p=v0.play();
+  log("play() -> "+(p?"promise":"null"));
+  if(p) p.then(function(){ log("play resolved"); }).catch(function(e){ log("REJECT "+e.name+": "+e.message); });
+  // Tesla sometimes needs a second kick after 200ms while still in gesture window - use rAF not timeout
+  requestAnimationFrame(function(){ if(v0.paused) { log("rAF still paused -> retry play"); var p2=v0.play(); if(p2) p2.catch(function(e){log("rAF reject "+e.name)}); } });
+});
+
+document.getElementById("btnUnmuted").addEventListener("click",function(){
+  var kv=document.getElementById("globalVideoKeepAlive");
+  if(window.__kaPlay) window.__kaPlay();
+  if(kv) try{kv.play()}catch(e){}
+  log("=== TAP unmuted === rs="+v0.readyState+" paused="+v0.paused);
+  v0.muted=false; v0.volume=1;
+  if(!v0.currentSrc){ v0.src="./test.mp4"; try{v0.load()}catch(e){} }
+  var p=v0.play();
+  if(p) p.then(function(){log("unmuted play resolved")}).catch(function(e){log("unmuted REJECT "+e.name+": "+e.message)});
+});
+
+document.getElementById("btnNative").addEventListener("click",function(){
+  log("=== NATIVE === tap the video's own triangle, not this button. Video controls are now highlighted.");
+  v0.style.borderColor="#f59e0b"; v0.style.borderWidth="4px";
+  setTimeout(function(){ v0.style.borderColor="#444"; },3000);
+});
+
+document.getElementById("btnReset").addEventListener("click",function(){
+  try{v0.pause()}catch(e){} v0.removeAttribute("src"); try{v0.load()}catch(e){} log("reset");
+  sPoll.textContent="reset - tap Play"; document.getElementById("log0").textContent="";
+});
+</script>
+</body></html>
